@@ -115,7 +115,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void UserController_update_mustBeNotFoundException() throws NotFoundException {
+    void filmController_update_mustBeNotFoundException() throws NotFoundException {
         Film film = new Film();
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 200; i++) {
