@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
@@ -23,34 +25,41 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> getAll() {
-        return userService.getAll();
+    public ResponseEntity<Collection<User>> getAll() {
+        Collection<User> users = userService.getAll();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping({"/{id}"})
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.getUserById(id));
     }
 
+
     @GetMapping({"/{id}/friends"})
-    public Collection<User> getUserFriends(@PathVariable Long id) {
-        return userService.getUserFriends(id);
+    public ResponseEntity<Collection<User>> getUserFriends(@PathVariable Long id) {
+        Collection<User> friends = userService.getUserFriends(id);
+        return ResponseEntity.ok(friends);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getCommonFriends(@PathVariable Long id,
+    public ResponseEntity<Collection<User>> getCommonFriends(@PathVariable Long id,
                                              @PathVariable Long otherId) {
-        return userService.getCommonFriends(id, otherId);
+        return ResponseEntity.ok(userService.getCommonFriends(id, otherId));
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
-        return userService.create(user);
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.create(user));
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User newUser) {
-        return userService.update(newUser);
+    public ResponseEntity<User> update(@Valid @RequestBody User newUser) {
+        return ResponseEntity.ok(userService.update(newUser));
     }
 
     @PutMapping({"/{id}/friends/{friendId}"})
@@ -64,4 +73,5 @@ public class UserController {
                              @PathVariable Long friendId) {
         userService.removeFriend(id, friendId);
     }
+
 }

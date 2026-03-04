@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -24,29 +26,31 @@ public class FilmController {
     }
 
     @GetMapping
-    public Collection<Film> getAll() {
-        return filmService.getAll();
+    public ResponseEntity<Collection<Film>> getAll() {
+        return ResponseEntity.ok(filmService.getAll());
     }
 
     @GetMapping({"/{id}"})
-    public Film getFilmById(@PathVariable Long id) {
-        return filmService.getFilmById(id);
+    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
+        return ResponseEntity.ok(filmService.getFilmById(id));
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopular(
+    public ResponseEntity<Collection<Film>> getPopular(
             @RequestParam(defaultValue = "10") int count) {
-        return filmService.getPopular(count);
+        return ResponseEntity.ok(filmService.getPopular(count));
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) throws ValidationException {
-        return filmService.create(film);
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) throws ValidationException {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(filmService.create(film));
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film newFilm) throws ValidationException, NotFoundException {
-        return filmService.update(newFilm);
+    public ResponseEntity<Film> update(@Valid @RequestBody Film newFilm) throws ValidationException, NotFoundException {
+        return ResponseEntity.ok(filmService.update(newFilm));
     }
 
 

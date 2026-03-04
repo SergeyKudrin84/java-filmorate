@@ -6,6 +6,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -113,7 +114,7 @@ class FilmorateApplicationTests {
         film.setReleaseDate(releaseDateOfFirstFilm);
         film.setDuration(120);
 
-        Film newFilm = filmController.create(film);
+        Film newFilm = (filmController.create(film)).getBody();
 
         assertEquals(
                 1,
@@ -225,7 +226,7 @@ class FilmorateApplicationTests {
         Film updateFilm = new Film();
         updateFilm.setId((long) 1);
         updateFilm.setDescription("Описание");
-        film = filmController.update(updateFilm);
+        film = (filmController.update(updateFilm)).getBody();
 
         Film standardFilm = new Film();
         standardFilm.setName(stringBuilder.toString());
@@ -256,7 +257,7 @@ class FilmorateApplicationTests {
         Film updateFilm = new Film();
         updateFilm.setId((long) 1);
         updateFilm.setName("Наименование");
-        film = filmController.update(updateFilm);
+        film = (filmController.update(updateFilm)).getBody();
 
         Film standardFilm = new Film();
         standardFilm.setName("Наименование");
@@ -286,7 +287,7 @@ class FilmorateApplicationTests {
         Film updateFilm = new Film();
         updateFilm.setId((long) 1);
         updateFilm.setReleaseDate(LocalDate.of(2025, 12, 29));
-        film = filmController.update(updateFilm);
+        film = (filmController.update(updateFilm)).getBody();
 
         Film standardFilm = new Film();
         standardFilm.setName(stringBuilder.toString());
@@ -316,7 +317,7 @@ class FilmorateApplicationTests {
         Film updateFilm = new Film();
         updateFilm.setId((long) 1);
         updateFilm.setDuration(60);
-        film = filmController.update(updateFilm);
+        film = (filmController.update(updateFilm)).getBody();
 
         Film standardFilm = new Film();
         standardFilm.setName(stringBuilder.toString());
@@ -349,7 +350,7 @@ class FilmorateApplicationTests {
         updateFilm.setDuration(60);
         updateFilm.setReleaseDate(LocalDate.of(2024, 06, 01));
         updateFilm.setDescription("New description");
-        film = filmController.update(updateFilm);
+        film = (filmController.update(updateFilm)).getBody();
 
         Film standardFilm = new Film();
         standardFilm.setName("New name");
@@ -443,10 +444,11 @@ class FilmorateApplicationTests {
         user.setLogin("login");
         user.setEmail("aa@bb.com");
 
-        User newUser = userController.create(user);
+        ResponseEntity<User> response = userController.create(user);
+        User newUser = response.getBody();
 
         assertEquals(
-                1,
+                1L,
                 newUser.getId(),
                 "Неверный id пользователя"
         );
@@ -463,7 +465,7 @@ class FilmorateApplicationTests {
 
         Exception exception = assertThrows(
                 NotFoundException.class,
-                () -> userController.update(user),
+                () -> (userController.update(user)).getBody(),
                 "Вернулось не NotFoundException"
         );
         assertEquals(
@@ -526,7 +528,7 @@ class FilmorateApplicationTests {
         User updateUser = new User();
         updateUser.setId((long) 1);
         updateUser.setLogin("newLogin");
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setName("newLogin");
@@ -553,7 +555,7 @@ class FilmorateApplicationTests {
         User updateUser = new User();
         updateUser.setId((long) 1);
         updateUser.setLogin("newLogin");
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setName("name");
@@ -580,7 +582,7 @@ class FilmorateApplicationTests {
         User updateUser = new User();
         updateUser.setId((long) 1);
         updateUser.setName("newName");
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setName("newName");
@@ -607,7 +609,7 @@ class FilmorateApplicationTests {
         User updateUser = new User();
         updateUser.setId((long) 1);
         updateUser.setEmail("newEmail@aa.com");
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setName("name");
@@ -634,7 +636,7 @@ class FilmorateApplicationTests {
         User updateUser = new User();
         updateUser.setId((long) 1);
         updateUser.setBirthday(LocalDate.now().plusYears(-10));
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setName("name");
@@ -664,7 +666,7 @@ class FilmorateApplicationTests {
         user.setName("newName");
         user.setEmail("newEmail@bb.com");
         updateUser.setBirthday(LocalDate.now().plusYears(-10));
-        user = userController.update(updateUser);
+        user = (userController.update(updateUser)).getBody();
 
         User standardUser = new User();
         standardUser.setLogin("newLogin");
@@ -688,7 +690,7 @@ class FilmorateApplicationTests {
         user.setBirthday(LocalDate.now().plusYears(-20));
         userController.create(user);
 
-        User findUser = userController.getUserById((long) 1);
+        User findUser = (userController.getUserById((long) 1)).getBody();
 
         assertEquals(
                 1,
@@ -772,13 +774,13 @@ class FilmorateApplicationTests {
 
         assertEquals(
                 1,
-                userController.getUserById((long) 1).getFriends().size(),
+                (userController.getUserById((long) 1)).getBody().getFriends().size(),
                 "Неверное количество друзей"
         );
 
         assertEquals(
                 1,
-                userController.getUserById((long) 2).getFriends().size(),
+                (userController.getUserById((long) 2)).getBody().getFriends().size(),
                 "Неверное количество друзей"
         );
     }
@@ -852,18 +854,18 @@ class FilmorateApplicationTests {
         userController.addFriend((long) 1, (long) 3);
 
         assertEquals(2,
-                userController.getUserById((long) 1).getFriends().size(),
+                (userController.getUserById((long) 1)).getBody().getFriends().size(),
                 "Неверное количество друзей"
         );
 
         userController.removeFriend((long) 1, (long) 3);
 
         assertEquals(1,
-                userController.getUserById((long) 1).getFriends().size(),
+                (userController.getUserById((long) 1)).getBody().getFriends().size(),
                 "Неверное количество друзей"
         );
         assertEquals(0,
-                userController.getUserById((long) 3).getFriends().size(),
+                (userController.getUserById((long) 3)).getBody().getFriends().size(),
                 "Неверное количество друзей"
         );
     }
@@ -904,7 +906,7 @@ class FilmorateApplicationTests {
         userController.addFriend((long) 1, (long) 2);
         userController.addFriend((long) 1, (long) 3);
 
-        Collection<User> users = userController.getUserFriends((long) 1);
+        Collection<User> users = (userController.getUserFriends((long) 1)).getBody();
 
         assertEquals(2,
                 users.size(),
@@ -984,7 +986,7 @@ class FilmorateApplicationTests {
         userController.addFriend((long) 1, (long) 3);
         userController.addFriend((long) 2, (long) 3);
 
-        Collection<User> users = userController.getCommonFriends((long) 1, (long) 3);
+        Collection<User> users = (userController.getCommonFriends((long) 1, (long) 3)).getBody();
 
         assertEquals(1,
                 users.size(),
@@ -1004,7 +1006,7 @@ class FilmorateApplicationTests {
 
         filmController.create(film);
 
-        Film findFilm = filmController.getFilmById((long) 1);
+        Film findFilm = (filmController.getFilmById((long) 1)).getBody();
 
         assertEquals(
                 1,
@@ -1168,7 +1170,7 @@ class FilmorateApplicationTests {
         filmController.addLike((long) 3, (long) 1);
         filmController.addLike((long) 3, (long) 2);
 
-        Collection<Film> films = filmController.getPopular(2);
+        Collection<Film> films = (filmController.getPopular(2)).getBody();
         assertEquals(
                 2,
                 films.size(),
