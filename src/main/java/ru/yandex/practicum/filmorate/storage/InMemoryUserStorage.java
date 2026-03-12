@@ -5,6 +5,7 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.TypeFriendship;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -103,9 +104,9 @@ public class InMemoryUserStorage implements UserStorage {
         User user = getUserById(id);
         User friend = getUserById(friendId);
 
-        user.getFriends().add(friendId);
+        user.getFriends().put(friendId, TypeFriendship.NOT_CONFIRMED);
         log.info("Added user: {} friend: {}", user, friend);
-        friend.getFriends().add(id);
+        friend.getFriends().put(id, TypeFriendship.NOT_CONFIRMED);
         log.info("Added user: {} friend: {}", friend, user);
     }
 

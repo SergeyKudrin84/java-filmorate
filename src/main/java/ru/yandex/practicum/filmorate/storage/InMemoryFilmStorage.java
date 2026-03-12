@@ -24,7 +24,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Validator validator;
     private final UserStorage userStorage;
 
-
     @Override
     public Film addFilm(Film film) throws ValidationException {
         log.info("Creating film: {}", film);
