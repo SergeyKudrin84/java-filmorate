@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -44,7 +45,7 @@ public class UserService {
 
     public Collection<User> getUserFriends(Long id) throws NotFoundException {
         User user = getUserById(id);
-        return user.getFriends().stream()
+        return user.getFriends().keySet().stream()
                 .map(userStorage::getUserById)
                 .toList();
     }
@@ -60,8 +61,11 @@ public class UserService {
         User user = getUserById(id);
         User other = getUserById(otherId);
 
-        return user.getFriends().stream()
-                .filter(other.getFriends()::contains)
+        Set<Long> userFriends = user.getFriends().keySet();
+        Set<Long> otherFriends = other.getFriends().keySet();
+
+        return userFriends.stream()
+                .filter(otherFriends::contains)
                 .map(userStorage::getUserById)
                 .toList();
     }
