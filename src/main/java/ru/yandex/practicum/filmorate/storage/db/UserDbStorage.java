@@ -65,7 +65,6 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         super(jdbc, mapper, User.class);
         this.validateUser = validateUser;
     }
-    
     @Override
     public void addFriend(Long id, Long friendId) {
         User user1 = findUserById(id);
