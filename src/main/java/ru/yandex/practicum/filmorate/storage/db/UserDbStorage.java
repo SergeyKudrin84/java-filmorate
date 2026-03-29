@@ -30,13 +30,13 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
     private static final String FIND_FRIENDS_QUERY = """
-            SELECT u.* 
+            SELECT u.*
             FROM users u
             JOIN friends f ON u.id = f.user2_id
             WHERE f.user1_id = ?
             """;
     private static final String FIND_FRIENDS_TYPE_QUERY = """
-            SELECT f.user2_id, 
+            SELECT f.user2_id,
             tf.type
             FROM friends f
             JOIN types_friendship tf ON f.type_friendship_id = tf.id
