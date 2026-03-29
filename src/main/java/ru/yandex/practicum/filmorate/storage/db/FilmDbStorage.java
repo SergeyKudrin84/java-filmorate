@@ -34,15 +34,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private final GenreService genreService;
     private final MpaService mpaService;
 
-    private static final String INSERT_QUERY = """
-            INSERT INTO films (name, description, releaseDate, duration, rating) 
-            VALUES (?, ?, ?, ?, ?)
-            """;
+    private static final String INSERT_QUERY = "" +
+            "INSERT INTO films (name, description, releaseDate, duration, rating) " +
+            "VALUES (?, ?, ?, ?, ?)";
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
-    private static final String UPDATE_QUERY = """
-            UPDATE films SET name=?, description=?, releaseDate=?, duration=?, rating=? 
-            WHERE id=?
-            """;
+    private static final String UPDATE_QUERY = "" +
+            "UPDATE films SET name=?, description=?, releaseDate=?, duration=?, rating=? " +
+            "WHERE id=?";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
     private static final String FIND_POPULAR_QUERY = """
             SELECT f.*, COUNT(fl.user_id) AS likes_count
