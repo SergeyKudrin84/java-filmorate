@@ -15,9 +15,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,10 +36,11 @@ class FilmorateApplicationTests {
     void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
-        userStorage = new InMemoryUserStorage(validator);
+        userStorage = new InMemoryUserStorage(new ValidateUser(validator));
         userController = new UserController(new UserService(userStorage));
         filmController = new FilmController(
-                new FilmService(new InMemoryFilmStorage(validator, userStorage)));
+                new FilmService(new InMemoryFilmStorage(
+                        userStorage, new ValidateFilm(validator))));
     }
 
     @Test
