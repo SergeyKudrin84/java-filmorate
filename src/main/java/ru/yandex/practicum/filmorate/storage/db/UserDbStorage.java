@@ -65,18 +65,18 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         super(jdbc, mapper, User.class);
         this.validateUser = validateUser;
     }
-
+    
     @Override
     public void addFriend(Long id, Long friendId) {
         User user1 = findUserById(id);
         User user2 = findUserById(friendId);
-        int type_friendship_id = 2;
+        int typeFriendshipId = 2;
         Collection<User> user2Friends = getUserFriends(friendId);
         if (user2Friends.contains(user1)) {
-            type_friendship_id = 1;
-            update(UPDATE_TYPE_FRIENDSHIP_QUERY, type_friendship_id, friendId, id);
+            typeFriendshipId = 1;
+            update(UPDATE_TYPE_FRIENDSHIP_QUERY, typeFriendshipId, friendId, id);
         }
-        insert(INSERT_FRIENDS_QUERY, id, friendId, type_friendship_id);
+        insert(INSERT_FRIENDS_QUERY, id, friendId, typeFriendshipId);
     }
 
     @Override
