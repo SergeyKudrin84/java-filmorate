@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/mpa")
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class MpaController {
     }
 
     @GetMapping({"/{id}"})
-    public ResponseEntity<MpaDto> getGenreById(@PathVariable Integer id) {
+    public ResponseEntity<MpaDto> getMpaById(@PathVariable Integer id) {
         return ResponseEntity.ok(mpaService.findById(id));
     }
 }

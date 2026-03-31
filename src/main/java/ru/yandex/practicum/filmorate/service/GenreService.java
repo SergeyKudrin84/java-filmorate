@@ -27,7 +27,11 @@ public class GenreService {
     public GenreDto findById(Long id) {
         return genreRepository.findById(id)
                 .map(GenreMapper::mapToGenreDto)
-                .orElseThrow(() -> new NotFoundException("Genre not found with id: " + id));
+                .orElseThrow(() ->  {
+                    String message = "Genre not found with id: " + id;
+                    log.warn("findById: NotFoundException: {}", message);
+                    return new NotFoundException(message);
+                });
     }
 
     public List<GenreDto> findGenresByFilmId(Long filmId) {

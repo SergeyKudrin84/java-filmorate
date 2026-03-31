@@ -13,7 +13,6 @@ import java.util.Collection;
 
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {

@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {

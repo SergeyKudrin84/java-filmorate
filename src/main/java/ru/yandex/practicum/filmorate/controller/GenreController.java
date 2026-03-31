@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.dto.GenreDto;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/genres")
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class GenreController {
     }
 
     @GetMapping({"/{id}"})
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable Long id) {
+    public ResponseEntity<GenreDto> getGenreById(@PathVariable Long id) throws NotFoundException {
         return ResponseEntity.ok(genreService.findById(id));
     }
 }

@@ -26,6 +26,10 @@ public class MpaService {
     public MpaDto findById(Integer id) {
         return mpaRepository.findById(id)
                 .map(MpaMapper::mapToMpaDto)
-                .orElseThrow(() -> new NotFoundException("Mpa not found with id: " + id));
+                .orElseThrow(() -> {
+                    String message = "Mpa not found with id: " + id;
+                    log.warn("findById: NotFoundException: {}", message);
+                    return new NotFoundException(message);
+                });
     }
 }
