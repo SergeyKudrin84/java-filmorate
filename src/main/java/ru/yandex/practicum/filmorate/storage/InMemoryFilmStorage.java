@@ -1,34 +1,36 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class InMemoryFilmStorage implements FilmStorage {
     private final AtomicLong idGenerator = new AtomicLong(0);
     private final Map<Long, Film> films = new HashMap<>();
-    private final LocalDate releaseDateOfFirstFilm = LocalDate.of(1895, 12, 28);
-    private final Validator validator;
+    //private final LocalDate releaseDateOfFirstFilm = LocalDate.of(1895, 12, 28);
+    private final ValidateFilm validateFilm;
     private final UserStorage userStorage;
+
+    @Autowired
+    public InMemoryFilmStorage(@Qualifier("userDbStorage") UserStorage userStorage, ValidateFilm validateFilm) {
+        this.validateFilm = validateFilm;
+        this.userStorage = userStorage;
+    }
 
     @Override
     public Film addFilm(Film film) throws ValidationException {
         log.info("Creating film: {}", film);
         try {
-            validate(film);
+            validateFilm.validate(film);
             film.setId(idGenerator.incrementAndGet());
             films.put(film.getId(), film);
             log.info("Film created: {}", film);
@@ -63,7 +65,7 @@ public class InMemoryFilmStorage implements FilmStorage {
                 if (newFilm.getDuration() == 0) {
                     newFilm.setDuration(oldFilm.getDuration());
                 }
-                validate(newFilm);
+                validateFilm.validate(newFilm);
 
                 films.put(newFilm.getId(), newFilm);
                 log.info("Film updated: {}", newFilm);
@@ -85,7 +87,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(Long id) throws NotFoundException {
+    public Film findFilmById(Long id) throws NotFoundException {
         log.info("Get film by id: {}", id);
         return getFilmByIdOrThrow(id);
     }
@@ -102,8 +104,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void addLike(Long id, Long userId) {
         log.info("Add like film {} by user: {}", id, userId);
-        Film film = getFilmById(id);
-        userStorage.getUserById(userId);
+        Film film = findFilmById(id);
+        userStorage.findUserById(userId);
 
         film.getLikes().add(userId);
         log.info("Film like added: {}", film);
@@ -112,26 +114,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void removeLike(Long id, Long userId) {
         log.info("Remove like film {} by user: {}", id, userId);
-        Film film = getFilmById(id);
-        userStorage.getUserById(userId);
+        Film film = findFilmById(id);
+        userStorage.findUserById(userId);
 
         film.getLikes().remove(userId);
         log.info("Removed film like: {}", film);
     }
 
-    private void validate(Film film) throws ValidationException {
+    @Override
+    public Collection<Film> getPopular(int count) {
+        log.info("Get popular films by count: {}", count);
+        Comparator<Film> comparingByLikes = Comparator.comparingInt((Film f) -> f.getLikes().size());
+        comparingByLikes = comparingByLikes.reversed();
 
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations.iterator().next().getMessage());
-        }
-
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(releaseDateOfFirstFilm)) {
-            throw new ValidationException(
-                    "Год релиза должен быть после " +
-                            releaseDateOfFirstFilm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            );
-        }
+        return getAllFilms().stream()
+                .sorted(comparingByLikes)
+                .limit(count)
+                .toList();
     }
 }
