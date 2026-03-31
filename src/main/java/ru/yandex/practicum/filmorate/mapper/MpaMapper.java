@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.MpaDto;
